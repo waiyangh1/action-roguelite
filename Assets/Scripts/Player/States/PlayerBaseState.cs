@@ -12,4 +12,10 @@ public abstract class PlayerBaseState : IState
     public abstract void Update();
     public abstract void FixedUpdate();
     public abstract void Exit();
+
+    protected void TryDash()
+    {
+        if (Player.DashPressed && Player.CanDash)
+            StateMachine.SwitchState(StateMachine.DashState);
+    }
 }

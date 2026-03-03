@@ -12,6 +12,8 @@ public class PlayerIdleState : PlayerBaseState
 
     public override void Update()
     {
+        TryDash();
+
         if (Player.MoveInput.sqrMagnitude > 0.01f)
             StateMachine.SwitchState(StateMachine.RunState);
     }
