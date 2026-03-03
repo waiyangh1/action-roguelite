@@ -6,6 +6,8 @@ public class PlayerRunState : PlayerBaseState
 
     public override void Update()
     {
+        TickLinger();
+        TryAttack();
         TryDash();
 
         if (Player.MoveInput.sqrMagnitude < 0.01f)
