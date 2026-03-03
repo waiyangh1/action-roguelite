@@ -3,11 +3,9 @@ using UnityEngine.InputSystem;
 
 public class PlayerController : MonoBehaviour
 {
-    [SerializeField] float moveSpeed = 5f;
-    [SerializeField] float dashSpeed = 18f;
-    [SerializeField] float dashDuration = 0.14f;
-    [SerializeField] float dashCooldown = 0.5f;
+    [SerializeField] PlayerSO data;
 
+    public PlayerSO Data => data;
     public Rigidbody2D Rb { get; private set; }
     public Animator Animator { get; private set; }
     public GhostTrail GhostTrail { get; private set; }
@@ -32,9 +30,9 @@ public class PlayerController : MonoBehaviour
     public bool DashPressed { get; private set; }
     public bool AttackPressed { get; private set; }
 
-    public float MoveSpeed => moveSpeed;
-    public float DashSpeed => dashSpeed;
-    public float DashDuration => dashDuration;
+    public float MoveSpeed => data.moveSpeed;
+    public float DashSpeed => data.dashSpeed;
+    public float DashDuration => data.dashDuration;
     public bool CanDash => dashCooldownTimer <= 0f;
 
     PlayerStateMachine stateMachine;
@@ -129,6 +127,6 @@ public class PlayerController : MonoBehaviour
 
     public void StartDashCooldown()
     {
-        dashCooldownTimer = dashCooldown;
+        dashCooldownTimer = data.dashCooldown;
     }
 }

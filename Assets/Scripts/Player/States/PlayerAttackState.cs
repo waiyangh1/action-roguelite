@@ -2,11 +2,6 @@ using UnityEngine;
 
 public class PlayerAttackState : PlayerBaseState
 {
-    // Hitbox windows as normalized time (0-1), scales with actual animation length
-    static readonly float[] HitOpenNorm  = { 0.30f, 0.28f, 0.30f };
-    static readonly float[] HitCloseNorm = { 0.88f, 0.88f, 0.98f };
-    const float LingerDuration = 0.5f;
-
     int comboIndex;
     bool nextQueued;
     bool hitboxOpen;
@@ -24,11 +19,11 @@ public class PlayerAttackState : PlayerBaseState
         float norm = Player.Animator.GetCurrentAnimatorStateInfo(0).normalizedTime;
 
         // Queue next attack after hitbox closes
-        if (Player.AttackPressed && !nextQueued && norm >= HitCloseNorm[comboIndex])
+        if (Player.AttackPressed && !nextQueued && norm >= Player.Data.hitCloseNorm[comboIndex])
             nextQueued = true;
 
         // Open / close hitbox
-        bool inWindow = norm >= HitOpenNorm[comboIndex] && norm <= HitCloseNorm[comboIndex];
+        bool inWindow = norm >= Player.Data.hitOpenNorm[comboIndex] && norm <= Player.Data.hitCloseNorm[comboIndex];
         if (inWindow && !hitboxOpen)      { Player.AttackHitbox.Enable();  hitboxOpen = true; }
         else if (!inWindow && hitboxOpen) { Player.AttackHitbox.Disable(); hitboxOpen = false; }
 
@@ -75,7 +70,7 @@ public class PlayerAttackState : PlayerBaseState
     void ExitToMovement()
     {
         if (comboIndex < 2)
-            StateMachine.LingerTimer = LingerDuration;
+            StateMachine.LingerTimer = Player.Data.lingerDuration;
 
         if (Player.MoveInput.sqrMagnitude > 0.01f)
             StateMachine.SwitchState(StateMachine.RunState);
