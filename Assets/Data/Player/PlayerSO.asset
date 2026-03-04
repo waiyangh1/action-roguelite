@@ -13,15 +13,9 @@ MonoBehaviour:
   m_Name: PlayerSO
   m_EditorClassIdentifier: Assembly-CSharp::PlayerSO
   moveSpeed: 5
-  dashSpeed: 18
+  dashSpeed: 25
   dashDuration: 0.14
-  dashCooldown: 0.5
-  lingerDuration: 0.3
-  hitOpenNorm:
-  - 0.3
-  - 0.28
-  - 0.3
-  hitCloseNorm:
-  - 0.88
-  - 0.88
-  - 0.98
+  dashCooldown: 0.4
+  lingerDuration: 0.2
+  attackMoveSpeed: 1
+  attackBufferDuration: 0.2

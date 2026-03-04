@@ -100,3 +100,6 @@ InitTestScene*.unity*
 
 # Rider auto-generated files
 .idea/
+
+# VS Code auto-generated files
+.vscode/

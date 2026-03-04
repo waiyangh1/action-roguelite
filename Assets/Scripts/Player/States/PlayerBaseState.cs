@@ -15,7 +15,8 @@ public abstract class PlayerBaseState : IState
 
     protected void TryAttack()
     {
-        if (!Player.AttackPressed) return;
+        if (!Player.IsAttackBuffered) return;
+        Player.ConsumeAttackBuffer();
 
         if (StateMachine.LingerTimer > 0f && StateMachine.ComboIndex < 2)
             StateMachine.ComboIndex++;

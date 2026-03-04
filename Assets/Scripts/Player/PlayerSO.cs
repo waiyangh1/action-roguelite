@@ -13,6 +13,6 @@ public class PlayerSO : ScriptableObject
 
     [Header("Attack")]
     public float lingerDuration = 0.5f;
-    public float[] hitOpenNorm  = { 0.30f, 0.28f, 0.30f };
-    public float[] hitCloseNorm = { 0.88f, 0.88f, 0.98f };
+    public float attackMoveSpeed = 1.5f;
+    public float attackBufferDuration = 0.2f;
 }

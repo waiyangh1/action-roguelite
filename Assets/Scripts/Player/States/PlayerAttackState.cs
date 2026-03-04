@@ -1,10 +1,6 @@
-using UnityEngine;
-
 public class PlayerAttackState : PlayerBaseState
 {
     int comboIndex;
-    bool nextQueued;
-    bool hitboxOpen;
 
     public PlayerAttackState(PlayerStateMachine stateMachine) : base(stateMachine) { }
 
@@ -17,37 +13,17 @@ public class PlayerAttackState : PlayerBaseState
     public override void Update()
     {
         float norm = Player.Animator.GetCurrentAnimatorStateInfo(0).normalizedTime;
-
-        // Queue next attack after hitbox closes
-        if (Player.AttackPressed && !nextQueued && norm >= Player.Data.hitCloseNorm[comboIndex])
-            nextQueued = true;
-
-        // Open / close hitbox
-        bool inWindow = norm >= Player.Data.hitOpenNorm[comboIndex] && norm <= Player.Data.hitCloseNorm[comboIndex];
-        if (inWindow && !hitboxOpen)      { Player.AttackHitbox.Enable();  hitboxOpen = true; }
-        else if (!inWindow && hitboxOpen) { Player.AttackHitbox.Disable(); hitboxOpen = false; }
-
-        // Animation finished when normalizedTime >= 1 and not mid-transition
         bool finished = !Player.Animator.IsInTransition(0) && norm >= 1f;
         if (!finished) return;
-
-        Player.AttackHitbox.Disable();
-        hitboxOpen = false;
-
-        if (nextQueued && comboIndex < 2)
-        {
-            comboIndex++;
-            BeginAttack();
-        }
-        else
-        {
-            ExitToMovement();
-        }
+        ExitToMovement();
     }
 
     public override void FixedUpdate()
     {
-        Player.SetVelocity(Vector2.zero);
+        if (Player.MoveInput.sqrMagnitude > 0.01f)
+            Player.SetVelocity(Player.AttackDir * Player.Data.attackMoveSpeed);
+        else
+            Player.SetVelocity(UnityEngine.Vector2.zero);
     }
 
     public override void Exit()
@@ -59,10 +35,7 @@ public class PlayerAttackState : PlayerBaseState
 
     void BeginAttack()
     {
-        nextQueued = false;
-        hitboxOpen = false;
-
-        Player.AttackHitbox.SetDirection(Player.AttackDir);
+        Player.AttackHitbox.BeginSwing();
         Player.Animator.SetInteger(Player.AttackIndexHash, comboIndex + 1);
         Player.Animator.SetBool(Player.IsAttackingHash, true);
     }

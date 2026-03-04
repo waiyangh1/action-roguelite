@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 public class PlayerController : MonoBehaviour
 {
@@ -20,8 +19,6 @@ public class PlayerController : MonoBehaviour
     public int IsDashingHash { get; private set; }
     public int IsAttackingHash { get; private set; }
     public int AttackIndexHash { get; private set; }
-    public int MouseDirXHash { get; private set; }
-    public int MouseDirYHash { get; private set; }
 
     // Runtime state (read by states)
     public Vector2 MoveInput { get; private set; }
@@ -34,10 +31,12 @@ public class PlayerController : MonoBehaviour
     public float DashSpeed => data.dashSpeed;
     public float DashDuration => data.dashDuration;
     public bool CanDash => dashCooldownTimer <= 0f;
+    public bool IsAttackBuffered => attackBufferTimer > 0f;
 
     PlayerStateMachine stateMachine;
     Controls inputActions;
     float dashCooldownTimer;
+    float attackBufferTimer;
 
     void Awake()
     {
@@ -54,8 +53,6 @@ public class PlayerController : MonoBehaviour
         IsDashingHash = Animator.StringToHash("IsDashing");
         IsAttackingHash = Animator.StringToHash("IsAttacking");
         AttackIndexHash = Animator.StringToHash("AttackIndex");
-        MouseDirXHash = Animator.StringToHash("MouseDirX");
-        MouseDirYHash = Animator.StringToHash("MouseDirY");
 
         inputActions = new Controls();
         stateMachine = new PlayerStateMachine(this);
@@ -80,7 +77,12 @@ public class PlayerController : MonoBehaviour
         DashPressed = inputActions.Player.Dash.triggered;
         AttackPressed = inputActions.Player.Attack.triggered;
 
-        UpdateAttackDir();
+        if (AttackPressed)
+            attackBufferTimer = data.attackBufferDuration;
+        else if (attackBufferTimer > 0f)
+            attackBufferTimer -= Time.deltaTime;
+
+        AttackDir = MoveInput.sqrMagnitude > 0.01f ? MoveInput.normalized : LastMoveDir;
 
         if (dashCooldownTimer > 0f)
             dashCooldownTimer -= Time.deltaTime;
@@ -98,27 +100,11 @@ public class PlayerController : MonoBehaviour
         inputActions.Player.Disable();
     }
 
-    void UpdateAttackDir()
-    {
-        Vector2 mouseScreen = Mouse.current.position.ReadValue();
-        Vector3 mouseWorld = Camera.main.ScreenToWorldPoint(
-            new Vector3(mouseScreen.x, mouseScreen.y, -Camera.main.transform.position.z));
+    public void ConsumeAttackBuffer() => attackBufferTimer = 0f;
 
-        Vector2 toMouse = (Vector2)mouseWorld - (Vector2)transform.position;
-        AttackDir = toMouse.sqrMagnitude > 0.001f ? toMouse.normalized : LastMoveDir;
-
-        Vector2 snapped = SnapTo8Dir(AttackDir);
-        Animator.SetFloat(MouseDirXHash, snapped.x);
-        Animator.SetFloat(MouseDirYHash, snapped.y);
-    }
-
-    static Vector2 SnapTo8Dir(Vector2 dir)
-    {
-        float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
-        float snapped = Mathf.Round(angle / 45f) * 45f;
-        float rad = snapped * Mathf.Deg2Rad;
-        return new Vector2(Mathf.RoundToInt(Mathf.Cos(rad)), Mathf.RoundToInt(Mathf.Sin(rad)));
-    }
+    // Animation events — called by attack animation clips on the player root.
+    public void EnableHitbox()  => AttackHitbox.Enable();
+    public void DisableHitbox() => AttackHitbox.Disable();
 
     public void SetVelocity(Vector2 velocity)
     {
@@ -129,4 +115,6 @@ public class PlayerController : MonoBehaviour
     {
         dashCooldownTimer = data.dashCooldown;
     }
+
+
 }
