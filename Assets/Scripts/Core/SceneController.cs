@@ -8,7 +8,7 @@ public class SceneController : MonoBehaviour
     [SerializeField] private LoadingOverlay overlay;
     [SerializeField] private SoundDataSO introMusic;
     [SerializeField] private SoundDataSO transitionSFX; // Add this for the "Whoosh" or fade sound
-
+    public class StartLevelSequenceEvent : IEvent { }
     private string _currentContentScene = "";
 
     private void OnEnable() => EventBus.Subscribe<ChangeSceneEvent>(OnSceneChangeRequest);
@@ -50,5 +50,7 @@ public class SceneController : MonoBehaviour
 
         // 3. Fade out the black overlay
         if (overlay != null) yield return overlay.FadeOut();
+
+        EventBus.Publish(new StartLevelSequenceEvent());
     }
 }

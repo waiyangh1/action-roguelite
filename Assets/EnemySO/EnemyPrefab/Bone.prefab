@@ -13,9 +13,9 @@ GameObject:
   - component: {fileID: 5746689436269733983}
   - component: {fileID: 467781466305323076}
   - component: {fileID: -6285925267365383759}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Bone
-  m_TagString: Untagged
+  m_TagString: WitchOrb
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

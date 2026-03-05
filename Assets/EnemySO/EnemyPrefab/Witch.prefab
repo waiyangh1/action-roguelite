@@ -109,6 +109,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WitchAI
   stats: {fileID: 11400000, guid: 452808d4118799546b17963debd32e4e, type: 2}
+  wanderRadius: 5
   anim: {fileID: -4790485660981030161}
   spriteRenderer: {fileID: 5445754014677509544}
   flashColor: {r: 1, g: 1, b: 1, a: 1}
