@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a57c71c858379c140b4da8677daaacf5, type: 3}
+  m_Name: Witch
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyStatsSO
+  health: 50
+  moveSpeed: 4.5
+  aggroRange: 5
+  attackRange: 5
+  telegraphDuration: 0.6
+  attackCooldown: 1.5
+  attackSound: {fileID: 11400000, guid: 9ad86fc2f1d9e65418ddcca44c025970, type: 2}
+  deathSound: {fileID: 11400000, guid: a7eed1cab9cfaf64a8b7d32cf97f4ff5, type: 2}
