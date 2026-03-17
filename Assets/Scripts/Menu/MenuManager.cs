@@ -22,7 +22,7 @@ public class MenuManager : MonoBehaviour
     public void StartGame()
     {
         // Make sure "EquipmentScene" is added to your Build Settings!
-        EventBus.Publish(new ChangeSceneEvent("Level1Scene"));
+        EventBus.Publish(new ChangeSceneEvent("Player"));
     }
     public void OpenSettings()
     {
