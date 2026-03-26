@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class PlayerController : MonoBehaviour
+public class PlayerController : MonoBehaviour, IDamageable
 {
     [SerializeField] PlayerSO data;
 
@@ -38,12 +38,21 @@ public class PlayerController : MonoBehaviour
     float dashCooldownTimer;
     float attackBufferTimer;
 
+    // Health & damage flash
+    int currentHealth;
+    SpriteRenderer spriteRenderer;
+    MaterialPropertyBlock mpb;
+    float flashTimer;
+    static readonly int FlashAmountID = Shader.PropertyToID("_FlashAmount");
+
     void Awake()
     {
         Rb = GetComponent<Rigidbody2D>();
         Animator = GetComponent<Animator>();
         GhostTrail = GetComponent<GhostTrail>();
         AttackHitbox = GetComponentInChildren<PlayerAttackHitbox>();
+        spriteRenderer = GetComponent<SpriteRenderer>();
+        mpb = new MaterialPropertyBlock();
 
         MoveXHash = Animator.StringToHash("MoveX");
         MoveYHash = Animator.StringToHash("MoveY");
@@ -65,6 +74,8 @@ public class PlayerController : MonoBehaviour
 
     void Start()
     {
+        currentHealth = data.maxHealth;
+
         Animator.SetFloat(LastMoveXHash, LastMoveDir.x);
         Animator.SetFloat(LastMoveYHash, LastMoveDir.y);
 
@@ -82,10 +93,19 @@ public class PlayerController : MonoBehaviour
         else if (attackBufferTimer > 0f)
             attackBufferTimer -= Time.deltaTime;
 
-        AttackDir = MoveInput.sqrMagnitude > 0.01f ? MoveInput.normalized : LastMoveDir;
+        Vector2 mouseScreen = UnityEngine.InputSystem.Mouse.current.position.ReadValue();
+        Vector2 mouseWorld = Camera.main.ScreenToWorldPoint(mouseScreen);
+        AttackDir = (mouseWorld - Rb.position).normalized;
 
         if (dashCooldownTimer > 0f)
             dashCooldownTimer -= Time.deltaTime;
+
+        if (flashTimer > 0f)
+        {
+            flashTimer -= Time.deltaTime;
+            if (flashTimer <= 0f)
+                ResetFlash();
+        }
 
         stateMachine.Update();
     }
@@ -116,5 +136,33 @@ public class PlayerController : MonoBehaviour
         dashCooldownTimer = data.dashCooldown;
     }
 
+    // --- IDamageable ---
 
+    public void TakeDamage(int amount, GameObject source)
+    {
+        currentHealth -= amount;
+
+        flashTimer = 0.1f;
+        spriteRenderer.GetPropertyBlock(mpb);
+        mpb.SetFloat(FlashAmountID, 1f);
+        spriteRenderer.SetPropertyBlock(mpb);
+
+        Debug.Log($"[Player] took {amount} damage, HP: {currentHealth}/{data.maxHealth}");
+
+        if (currentHealth <= 0)
+            Die();
+    }
+
+    public void Die()
+    {
+        Debug.Log("[Player] Died!");
+        gameObject.SetActive(false);
+    }
+
+    void ResetFlash()
+    {
+        spriteRenderer.GetPropertyBlock(mpb);
+        mpb.SetFloat(FlashAmountID, 0f);
+        spriteRenderer.SetPropertyBlock(mpb);
+    }
 }

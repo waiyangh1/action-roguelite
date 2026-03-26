@@ -1,19 +1,17 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-// Place on a child GameObject with any Collider2D (circle, box, polygon, etc.).
-// Collider starts disabled; animation events on the player root call
-// PlayerController.EnableHitbox / DisableHitbox which forward here.
-// BeginSwing clears the hit cache so each attack swing hits each enemy only once.
 public class PlayerAttackHitbox : MonoBehaviour
 {
     Collider2D col;
     readonly HashSet<int> hitThisSwing = new();
+    PlayerController player;
 
     void Awake()
     {
         col = GetComponent<Collider2D>();
         col.enabled = false;
+        player = GetComponentInParent<PlayerController>();
     }
 
     public void BeginSwing() => hitThisSwing.Clear();
@@ -23,7 +21,9 @@ public class PlayerAttackHitbox : MonoBehaviour
     void OnTriggerEnter2D(Collider2D other)
     {
         if (hitThisSwing.Add(other.gameObject.GetInstanceID()))
-            Debug.Log($"[Attack] Hit: {other.name}");
-        // TODO: other.GetComponent<EnemyHealth>()?.TakeDamage(damage);
+        {
+            if (other.TryGetComponent(out IDamageable damageable))
+                damageable.TakeDamage(player.Data.attackDamage, player.gameObject);
+        }
     }
 }

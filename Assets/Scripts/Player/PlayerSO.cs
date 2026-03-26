@@ -11,6 +11,10 @@ public class PlayerSO : ScriptableObject
     public float dashDuration = 0.14f;
     public float dashCooldown = 0.5f;
 
+    [Header("Combat")]
+    public int maxHealth = 100;
+    public int attackDamage = 20;
+
     [Header("Attack")]
     public float lingerDuration = 0.5f;
     public float attackMoveSpeed = 1.5f;

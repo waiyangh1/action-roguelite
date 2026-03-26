@@ -35,6 +35,7 @@ public class PlayerAttackState : PlayerBaseState
 
     void BeginAttack()
     {
+        Player.LastMoveDir = Player.AttackDir;
         Player.AttackHitbox.BeginSwing();
         Player.Animator.SetInteger(Player.AttackIndexHash, comboIndex + 1);
         Player.Animator.SetBool(Player.IsAttackingHash, true);

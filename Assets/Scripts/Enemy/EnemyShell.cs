@@ -107,6 +107,7 @@ public class EnemyShell : MonoBehaviour, IDamageable
 
     public void TakeDamage(int amount, GameObject source)
     {
+        Debug.Log($"{currentData.enemyType} took {amount} damage from {source.name}");
         currentHealth -= amount;
 
         flashTimer = 0.1f;
